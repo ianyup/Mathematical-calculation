@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>一年级数学口算练习</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6ecbf5 0%, #059ee3 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+        }
+        
+        /* 竖向16:9的容器 */
+        .app-container {
+            width: 100%;
+            max-width: 400px;
+            height: calc(400px * 16 / 9); /* 16:9的比例 */
+            max-height: 90vh;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #ff7e5f 0%, #ff6a5b 100%);
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .timer-section {
+            background-color: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+            text-align: center;
+        }
+        
+        .timer-display {
+            font-size: 36px;
+            font-weight: bold;
+            color: #333;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .timer-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+        
+        .start-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .pause-btn {
+            background-color: #ffc107;
+            color: #333;
+        }
+        
+        .reset-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+        }
+        
+        .problem-display {
+            font-size: 70px;
+            font-weight: bold;
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .progress-info {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 20px;
+        }
+        
+        .main-btn {
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
+            color: white;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+        }
+        
+        .end-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #fa5252 100%);
+            color: white;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+        }
+        
+        .restart-btn {
+            background: linear-gradient(135deg, #20c997 0%, #12b886 100%);
+            color: white;
+            box-shadow: 0 4px 10px rgba(32, 201, 151, 0.3);
+        }
+        
+        .main-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .main-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .footer {
+            background-color: #f8f9fa;
+            padding: 15px 20px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .completion-modal {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            z-index: 10;
+            padding: 30px 20px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .completion-content {
+            max-width: 320px;
+            width: 100%;
+        }
+        
+        .completion-title {
+            font-size: 28px;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+        }
+        
+        .completion-time {
+            font-size: 36px;
+            font-weight: bold;
+            color: #333;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .completion-stats {
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+        
+        .modal-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+            background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
+            color: white;
+        }
+        
+        @media (max-width: 400px) {
+            .app-container {
+                height: calc(100vw * 16 / 9);
+            }
+            
+            .problem-display {
+                font-size: 60px;
+            }
+            
+            .timer-display {
+                font-size: 32px;
+            }
+        }
+        
+        @media (max-height: 700px) {
+            .app-container {
+                max-height: 95vh;
+            }
+            
+            .problem-display {
+                font-size: 56px;
+                margin-bottom: 20px;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+        }
+        
+        /* 钉钉适配 */
+        .dd-notice {
+            background-color: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 10px 15px;
+            margin: 15px 0;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1><i class="fas fa-calculator"></i> 一年级口算练习</h1>
+            <p>20以内加减法 | 共120题</p>
+        </div>
+        
+        <div class="timer-section">
+            <div class="timer-display" id="timerDisplay">00:00:00</div>
+            <div class="timer-controls">
+                <button class="timer-btn start-btn" id="startBtn">
+                    <i class="fas fa-play"></i> 开始
+                </button>
+                <button class="timer-btn pause-btn" id="pauseBtn" disabled>
+                    <i class="fas fa-pause"></i> 暂停
+                </button>
+                <button class="timer-btn reset-btn" id="resetBtn">
+                    <i class="fas fa-redo"></i> 重置
+                </button>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="problem-display" id="problemDisplay">
+                准备开始
+            </div>
+            
+            <div class="progress-info" id="progressInfo">
+                点击"开始"按钮，然后按"下一题"开始练习
+            </div>
+            
+            <div class="dd-notice">
+                <i class="fas fa-info-circle"></i> 本程序可直接在钉钉内使用，无需安装
+            </div>
+            
+            <div class="controls">
+                <button class="main-btn next-btn" id="nextBtn">
+                    <i class="fas fa-forward"></i> 下一题
+                </button>
+                <button class="main-btn end-btn" id="endBtn">
+                    <i class="fas fa-stop"></i> 结束练习
+                </button>
+                <button class="main-btn restart-btn" id="restartBtn">
+                    <i class="fas fa-sync-alt"></i> 重新开始
+                </button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            20以内加减法口算练习 | 设计用于一年级小学生
+        </div>
+        
+        <div class="completion-modal" id="completionModal">
+            <div class="completion-content">
+                <h2 class="completion-title">练习完成！</h2>
+                <div class="completion-time" id="completionTime">00:00:00</div>
+                <p>恭喜你完成了所有120道题目！</p>
+                
+                <div class="completion-stats">
+                    <div class="stat-item">
+                        <span>总题数：</span>
+                        <span id="totalStat">120</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>已完成：</span>
+                        <span id="completedStat">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>总用时：</span>
+                        <span id="timeStat">0秒</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>完成时间：</span>
+                        <span id="finishTimeStat">--:--</span>
+                    </div>
+                </div>
+                
+                <button class="modal-btn" id="closeModalBtn">
+                    <i class="fas fa-check"></i> 确定
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 从文档中提取的所有题目数据
+        const allProblems = [
+            // 20以内不进位加不退位减法
+            "1+14", "2+13", "3+12", "4+11", "5+10", "15-5", "13-2", "15-4", 
+            "14-3", "14-4", "10+10", "12+8", "11+8", "11+9", "14+6", "12+7", 
+            "13+6", "13+7", "14+4", "14+5", "15+4", "15+5", "16+2", "16+3", 
+            "16+4", "17+2", "17+3", "18+2", "10+10", "18-8", "16-5", "16-6", 
+            "17-6", "17-10", "18-16", "18-7", "19-17", "19-8", "19-10", "20-2", 
+            "20-3", "20-4", "20-5", "20-6", "20-7", "20-8", "20-9", "20-10",
+            
+            // 20以内进位加法
+            "9+1", "9+2", "9+3", "9+4", "9+5", "9+6", "9+7", "9+8", "9+9", 
+            "8+2", "8+3", "8+4", "8+5", "8+6", "8+7", "8+8", "8+9", "7+3", 
+            "7+4", "7+5", "7+6", "7+7", "7+8", "7+9", "6+4", "6+5", "6+6", 
+            "6+7", "6+8", "6+9", "5+5", "5+6", "5+7", "5+8", "5+9", "4+6", 
+            "4+7", "4+8", "4+9", "3+7", "3+8", "3+9", "2+8", "2+9", "1+9",
+            
+            // 20以内退位减法
+            "10-9", "11-9", "12-9", "13-9", "14-9", "15-9", "16-9", "17-9", "18-9",
+            "10-8", "11-8", "12-8", "13-8", "14-8", "15-8", "16-8", "17-8",
+            "10-7", "11-7", "12-7", "13-7", "14-7", "15-7", "16-7",
+            "10-6", "11-6", "12-6", "13-6", "14-6", "15-6",
+            "10-5", "11-5", "12-5", "13-5", "14-5",
+            "10-4", "11-4", "12-4", "13-4",
+            "10-3", "11-3", "12-3",
+            "10-2", "11-2", "10-1"
+        ];
+        
+        // 状态变量
+        let problems = [];
+        let currentIndex = 0;
+        let timer = 0;
+        let timerInterval = null;
+        let isRunning = false;
+        let isCompleted = false;
+        
+        // DOM元素
+        const timerDisplay = document.getElementById('timerDisplay');
+        const problemDisplay = document.getElementById('problemDisplay');
+        const progressInfo = document.getElementById('progressInfo');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const endBtn = document.getElementById('endBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const completionModal = document.getElementById('completionModal');
+        const completionTime = document.getElementById('completionTime');
+        const totalStat = document.getElementById('totalStat');
+        const completedStat = document.getElementById('completedStat');
+        const timeStat = document.getElementById('timeStat');
+        const finishTimeStat = document.getElementById('finishTimeStat');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        
+        // 初始化
+        function init() {
+            // 打乱题目顺序
+            problems = [...allProblems];
+            shuffleArray(problems);
+            
+            currentIndex = 0;
+            timer = 0;
+            isRunning = false;
+            isCompleted = false;
+            
+            updateTimerDisplay();
+            updateProblemDisplay();
+            updateProgressInfo();
+            
+            // 重置按钮状态
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            nextBtn.disabled = true;
+            
+            // 隐藏完成模态框
+            completionModal.style.display = 'none';
+        }
+        
+        // 打乱数组顺序
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        
+        // 开始计时器
+        function startTimer() {
+            if (isRunning) return;
+            
+            isRunning = true;
+            startBtn.disabled = true;
+            pauseBtn.disabled = false;
+            nextBtn.disabled = false;
+            
+            timerInterval = setInterval(() => {
+                timer++;
+                updateTimerDisplay();
+            }, 1000);
+        }
+        
+        // 暂停计时器
+        function pauseTimer() {
+            if (!isRunning) return;
+            
+            isRunning = false;
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            
+            clearInterval(timerInterval);
+        }
+        
+        // 重置计时器
+        function resetTimer() {
+            pauseTimer();
+            timer = 0;
+            updateTimerDisplay();
+        }
+        
+        // 更新计时器显示
+        function updateTimerDisplay() {
+            const hours = Math.floor(timer / 3600);
+            const minutes = Math.floor((timer % 3600) / 60);
+            const seconds = timer % 60;
+            
+            timerDisplay.textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        // 显示下一题
+        function showNextProblem() {
+            if (currentIndex >= problems.length) {
+                completeExercise();
+                return;
+            }
+            
+            // 如果是第一题且计时器未启动，则自动启动计时器
+            if (currentIndex === 0 && !isRunning) {
+                startTimer();
+            }
+            
+            updateProblemDisplay();
+            updateProgressInfo();
+            currentIndex++;
+            
+            // 检查是否已完成所有题目
+            if (currentIndex >= problems.length) {
+                completeExercise();
+            }
+        }
+        
+        // 更新题目显示
+        function updateProblemDisplay() {
+            if (currentIndex < problems.length) {
+                problemDisplay.textContent = problems[currentIndex];
+            } else {
+                problemDisplay.textContent = "已完成所有题目！";
+            }
+        }
+        
+        // 更新进度信息
+        function updateProgressInfo() {
+            progressInfo.textContent = `第 ${currentIndex + 1} 题 / 共 ${problems.length} 题`;
+        }
+        
+        // 结束练习
+        function endExercise() {
+            pauseTimer();
+            showCompletionModal();
+        }
+        
+        // 完成所有题目
+        function completeExercise() {
+            pauseTimer();
+            isCompleted = true;
+            nextBtn.disabled = true;
+            showCompletionModal();
+        }
+        
+        // 显示完成模态框
+        function showCompletionModal() {
+            // 设置完成时间
+            completionTime.textContent = timerDisplay.textContent;
+            
+            // 设置统计数据
+            totalStat.textContent = problems.length;
+            completedStat.textContent = currentIndex;
+            timeStat.textContent = `${timer}秒`;
+            
+            // 设置完成时间
+            const now = new Date();
+            const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            finishTimeStat.textContent = timeString;
+            
+            // 显示模态框
+            completionModal.style.display = 'flex';
+        }
+        
+        // 关闭完成模态框
+        function closeCompletionModal() {
+            completionModal.style.display = 'none';
+        }
+        
+        // 事件监听
+        startBtn.addEventListener('click', startTimer);
+        pauseBtn.addEventListener('click', pauseTimer);
+        resetBtn.addEventListener('click', resetTimer);
+        nextBtn.addEventListener('click', showNextProblem);
+        endBtn.addEventListener('click', endExercise);
+        restartBtn.addEventListener('click', init);
+        closeModalBtn.addEventListener('click', closeCompletionModal);
+        
+        // 初始化应用
+        init();
+        
+        // 钉钉内适配提示
+        console.log("口算练习小程序已加载，共" + problems.length + "道题目");
+        
+        // 添加键盘快捷键支持
+        document.addEventListener('keydown', function(event) {
+            // 空格键切换开始/暂停
+            if (event.code === 'Space') {
+                event.preventDefault();
+                if (isRunning) {
+                    pauseTimer();
+                } else {
+                    startTimer();
+                }
+            }
+            
+            // N键下一题
+            if (event.code === 'KeyN') {
+                showNextProblem();
+            }
+            
+            // R键重新开始
+            if (event.code === 'KeyR') {
+                init();
+            }
+            
+            // E键结束练习
+            if (event.code === 'KeyE') {
+                endExercise();
+            }
+        });
+    </script>
+</body>
+</html>
